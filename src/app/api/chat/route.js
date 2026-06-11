@@ -16,6 +16,8 @@ export async function POST(req) {
 
         body: JSON.stringify({
           model,
+          stream: true,
+
           messages: [
             {
               role: "user",
@@ -26,34 +28,14 @@ export async function POST(req) {
       }
     );
 
-    const data = await response.json();
-
-    // Debug log
-    console.log("OpenRouter Response:", data);
-
-    // Handle OpenRouter errors
-    if (!response.ok) {
-      return NextResponse.json(
-        {
-          error:
-            data?.error?.message ||
-            data?.error ||
-            "OpenRouter request failed",
-        },
-        {
-          status: response.status,
-        }
-      );
-    }
-
-    return NextResponse.json({
-      content:
-        data?.choices?.[0]?.message?.content ||
-        "No content returned",
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
     });
   } catch (error) {
-    console.error("API Error:", error);
-
     return NextResponse.json(
       {
         error: error.message,
