@@ -75,7 +75,7 @@ export default function SignupPage() {
             </h1>
 
             <p className="mt-3 text-zinc-400">
-              GPT • Claude • Gemini • DeepSeek • Grok
+              The Hashmi Group AI aggregation platform
             </p>
 
           </div>
