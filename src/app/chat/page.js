@@ -14,6 +14,11 @@ import {
 import { MODELS } from "../lib/models";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {
+  PanelGroup,
+  Panel,
+  PanelResizeHandle,
+} from "react-resizable-panels";
 
 const RECENT_CHATS = [
   "Weather forecast for next week",
@@ -37,6 +42,10 @@ function AIAvatar({ icon }) {
       {icon}
     </div>
   );
+}
+
+function generateChatTitle(prompt) {
+  return prompt.trim().replace(/\s+/g, " ").split(" ").slice(0, 4).join(" ");
 }
 
 // ── Typing dots ───────────────────────────────────────────────────────────────
@@ -68,7 +77,7 @@ function SidebarContent({
   setOpenMenu,
   renameChat,
   deleteChat,
-})  {
+}) {
   return (
     <div className="flex flex-col h-full">
       {/* Logo row */}
@@ -82,7 +91,7 @@ function SidebarContent({
         {/* Close button — mobile only */}
         {onClose && (
           <button
-          onClick={() => onClose?.()}
+            onClick={() => onClose?.()}
             className={`p-1.5 rounded-lg ${
               dm
                 ? "hover:bg-zinc-800 text-zinc-400"
@@ -119,97 +128,83 @@ function SidebarContent({
           Recent
         </p>
         <div className="space-y-0.5">
-  {chats.map((chat) => (
-    <div
-      key={chat._id}
-      className={`group flex items-center rounded-lg ${
-        dm ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
-      }`}
-    >
-      <button
-        onClick={() => {
-          loadMessages(chat._id);
-          onClose?.();
-        }}
-        className={`flex-1 flex items-center gap-2.5 px-3 py-2.5 text-left text-sm ${
-          dm
-            ? "text-zinc-400 hover:text-white"
-            : "text-zinc-500 hover:text-zinc-800"
-        }`}
-      >
-        <MessageSquare
-          size={13}
-          className="shrink-0 opacity-60"
-        />
-
-        <span className="truncate">
-          {chat.title}
-        </span>
-      </button>
-
-      {/* 3 Dots Menu */}
-      <div className="relative mr-2 chat-menu">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-
-            setOpenMenu(
-              openMenu === chat._id
-                ? null
-                : chat._id
-            );
-          }}
-          className={`opacity-0 group-hover:opacity-100 transition px-2 ${
-            dm
-              ? "text-zinc-500 hover:text-white"
-              : "text-zinc-400 hover:text-black"
-          }`}
-        >
-          ⋯
-        </button>
-
-        {openMenu === chat._id && (
-          <div
-            className={`absolute right-0 top-7 z-50 w-36 rounded-lg border shadow-xl ${
-              dm
-                ? "bg-zinc-900 border-zinc-800"
-                : "bg-white border-zinc-200"
-            }`}
-          >
-            <button
-              onClick={() =>
-                renameChat(chat)
-              }
-              className={`w-full px-3 py-2 text-left text-sm ${
-                dm
-                  ? "hover:bg-zinc-800"
-                  : "hover:bg-zinc-100"
+          {chats.map((chat) => (
+            <div
+              key={chat._id}
+              className={`group flex items-center rounded-lg ${
+                dm ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
               }`}
             >
-              Rename
-            </button>
+              <button
+                onClick={() => {
+                  loadMessages(chat._id);
+                  onClose?.();
+                }}
+                className={`flex-1 flex items-center gap-2.5 px-3 py-2.5 text-left text-sm ${
+                  dm
+                    ? "text-zinc-400 hover:text-white"
+                    : "text-zinc-500 hover:text-zinc-800"
+                }`}
+              >
+                <MessageSquare size={13} className="shrink-0 opacity-60" />
 
-            <button
-              onClick={() =>
-                deleteChat(chat._id)
-              }
-              className="w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-red-500/10"
-            >
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  ))}
-</div>
+                <span className="truncate">
+                  {chat.title?.split(" ").slice(0, 5).join(" ")}
+                  {chat.title?.split(" ").length > 5 ? "" : ""}
+                </span>
+              </button>
 
+              {/* 3 Dots Menu */}
+              <div className="relative mr-2 chat-menu">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
 
+                    setOpenMenu(openMenu === chat._id ? null : chat._id);
+                  }}
+                  className={`opacity-0 group-hover:opacity-100 transition px-2 ${
+                    dm
+                      ? "text-zinc-500 hover:text-white"
+                      : "text-zinc-400 hover:text-black"
+                  }`}
+                >
+                  ⋯
+                </button>
+
+                {openMenu === chat._id && (
+                  <div
+                    className={`absolute right-0 top-7 z-50 w-36 rounded-lg border shadow-xl ${
+                      dm
+                        ? "bg-zinc-900 border-zinc-800"
+                        : "bg-white border-zinc-200"
+                    }`}
+                  >
+                    <button
+                      onClick={() => renameChat(chat)}
+                      className={`w-full px-3 py-2 text-left text-sm ${
+                        dm ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
+                      }`}
+                    >
+                      Rename
+                    </button>
+
+                    <button
+                      onClick={() => deleteChat(chat._id)}
+                      className="w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-red-500/10"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Model selector */}
       <div
-        className={`border-t p-3 ${dm ? "border-zinc-800" : "border-zinc-200"}`}
+        className={`hidden md:block  border-t p-3 ${dm ? "border-zinc-800" : "border-zinc-200"}`}
       >
         <p
           className={`px-2 mb-1.5 text-[10px] uppercase font-semibold tracking-widest ${
@@ -395,16 +390,12 @@ export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showModelMenu, setShowModelMenu] = useState(false);
-  const [openMenu, setOpenMenu] =
-  useState(null);
+  const [openMenu, setOpenMenu] = useState(null);
 
   const dm = darkMode;
   const hasMessages = messages.length > 0;
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
-
-
-  
 
   useEffect(() => {
     loadChats();
@@ -435,36 +426,24 @@ export default function ChatPage() {
     };
   }, [sidebarOpen]);
 
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     const target = e.target;
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      const target = e.target;
-  
-      if (
-        target.closest(".model-menu") ||
-        target.closest(".chat-menu")
-      ) {
-        return;
-      }
-  
-      setShowModelMenu(false);
-      setOpenMenu(null);
-    };
-  
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-  
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
-    };
-  }, []);
+  //     if (target.closest(".model-menu") || target.closest(".chat-menu")) {
+  //       return;
+  //     }
 
+  //     setShowModelMenu(false);
+  //     setOpenMenu(null);
+  //   };
 
+  //   document.addEventListener("mousedown", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   const loadChats = async () => {
     try {
@@ -487,52 +466,40 @@ export default function ChatPage() {
   };
 
   const renameChat = async (chat) => {
-    const title = window.prompt(
-      "Enter new chat name",
-      chat.title
-    );
-  
+    const title = window.prompt("Enter new chat name", chat.title);
+
     if (!title) return;
-  
+
     await fetch("/api/chat/rename", {
       method: "PUT",
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         chatId: chat._id,
         title,
       }),
     });
-  
+
     loadChats();
   };
-  
+
   const deleteChat = async (chatId) => {
-    if (
-      !confirm(
-        "Delete this chat?"
-      )
-    )
-      return;
-  
+    if (!confirm("Delete this chat?")) return;
+
     await fetch("/api/chat/delete", {
       method: "DELETE",
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         chatId,
       }),
     });
-  
+
     loadChats();
-  
-    if (
-      currentChatId === chatId
-    ) {
+
+    if (currentChatId === chatId) {
       setCurrentChatId(null);
       setMessages([]);
     }
@@ -593,6 +560,10 @@ export default function ChatPage() {
     }
   };
 
+  function generateChatTitle(prompt) {
+    return "TEST TITLE";
+  }
+
   const handleSend = async () => {
     if (!prompt.trim()) return;
 
@@ -608,6 +579,8 @@ export default function ChatPage() {
         return;
       }
     }
+
+    const isFirstMessage = messages.length === 0;
 
     setPrompt("");
 
@@ -637,6 +610,24 @@ export default function ChatPage() {
           content: userPrompt,
         }),
       });
+
+      console.log("RENAMING:", generateChatTitle(userPrompt));
+
+      if (isFirstMessage) {
+        await fetch("/api/chat/rename", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            chatId: activeChatId,
+            title: generateChatTitle(userPrompt),
+          }),
+        });
+
+        loadChats();
+      }
 
       // Rename chat automatically if first message
       if (messages.length === 0) {
@@ -738,16 +729,13 @@ export default function ChatPage() {
           content: assistantMessage,
         }),
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
-    
-      const text =
-        error?.message?.toLowerCase() || "";
-    
-      let message =
-        "Unable to generate response right now.";
-    
+
+      const text = error?.message?.toLowerCase() || "";
+
+      let message = "Unable to generate response right now.";
+
       if (
         text.includes("credit") ||
         text.includes("quota") ||
@@ -755,10 +743,9 @@ export default function ChatPage() {
         text.includes("insufficient") ||
         text.includes("limit")
       ) {
-        message =
-          "⚠️ AI credits have been exhausted. Please try again later.";
+        message = "⚠️ AI credits have been exhausted. Please try again later.";
       }
-    
+
       setMessages((prev) => [
         ...prev,
         {
@@ -766,10 +753,9 @@ export default function ChatPage() {
           content: message,
         },
       ]);
-    
+
       setLoading(false);
-    } 
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -787,26 +773,50 @@ export default function ChatPage() {
         dm ? "bg-[#0a0a0b] text-white" : "bg-white text-zinc-900"
       }`}
     >
+
+<PanelGroup direction="horizontal">
+
+
       {/* ── Desktop sidebar (hidden on mobile) ── */}
-      <aside
-        className={`hidden md:flex w-60 shrink-0 flex-col border-r ${
-          dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-zinc-50"
-        }`}
-      >
-       <SidebarContent
-  dm={dm}
-  chats={chats}
-  loadMessages={loadMessages}
-  createNewChat={createNewChat}
-  selectedModel={selectedModel}
-  setSelectedModel={setSelectedModel}
-  user={user}
-  openMenu={openMenu}
-  setOpenMenu={setOpenMenu}
-  renameChat={renameChat}
-  deleteChat={deleteChat}
+      {/* ── Desktop sidebar (Resizable) ── */}
+<Panel
+  defaultSize={18}
+  minSize={12}
+  maxSize={35}
+  className="hidden md:block"
+>
+  <aside
+    className={`h-full flex flex-col border-r ${
+      dm
+        ? "border-zinc-800 bg-zinc-950"
+        : "border-zinc-200 bg-zinc-50"
+    }`}
+  >
+    <SidebarContent
+      dm={dm}
+      chats={chats}
+      loadMessages={loadMessages}
+      createNewChat={createNewChat}
+      selectedModel={selectedModel}
+      setSelectedModel={setSelectedModel}
+      user={user}
+      openMenu={openMenu}
+      setOpenMenu={setOpenMenu}
+      renameChat={renameChat}
+      deleteChat={deleteChat}
+    />
+  </aside>
+</Panel>
+
+<PanelResizeHandle
+  className={`hidden md:block w-1 cursor-col-resize ${
+    dm
+      ? "bg-zinc-800 hover:bg-violet-500"
+      : "bg-zinc-200 hover:bg-violet-500"
+  }`}
 />
-      </aside>
+
+<Panel defaultSize={82}>
 
       {/* ── Mobile drawer backdrop ── */}
       {sidebarOpen && (
@@ -823,23 +833,23 @@ export default function ChatPage() {
         } ${dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"}`}
       >
         <SidebarContent
-  dm={dm}
-  chats={chats}
-  loadMessages={loadMessages}
-  createNewChat={createNewChat}
-  selectedModel={selectedModel}
-  setSelectedModel={setSelectedModel}
-  onClose={() => setSidebarOpen(false)}
-  user={user}
-  openMenu={openMenu}
-  setOpenMenu={setOpenMenu}
-  renameChat={renameChat}
-  deleteChat={deleteChat}
-/>
+          dm={dm}
+          chats={chats}
+          loadMessages={loadMessages}
+          createNewChat={createNewChat}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
+          onClose={() => setSidebarOpen(false)}
+          user={user}
+          openMenu={openMenu}
+          setOpenMenu={setOpenMenu}
+          renameChat={renameChat}
+          deleteChat={deleteChat}
+        />
       </aside>
 
       {/* ── Main column ── */}
-      <main className="relative flex flex-1 flex-col overflow-hidden min-w-0">
+      <main className="relative flex h-full flex-col overflow-hidden min-w-0">
         {/* ── Header ── */}
         <header
           className={`flex shrink-0 items-center justify-between px-3 sm:px-5 py-3 border-b z-10 ${
@@ -887,18 +897,53 @@ export default function ChatPage() {
 
           <div className="flex items-center gap-2">
             {/* Mobile model picker pill */}
-            <button
-              className={`flex md:hidden items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
-                dm
-                  ? "border-zinc-700 bg-zinc-900 text-zinc-300"
-                  : "border-zinc-200 bg-zinc-50 text-zinc-600"
-              }`}
-              onClick={() => setSidebarOpen(true)}
-            >
-              {selectedModel.icon}
-              <span>{selectedModel.name}</span>
-              <ChevronDown size={12} className="opacity-50" />
-            </button>
+            <div className="relative md:hidden">
+  <button
+    className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
+      dm
+        ? "border-zinc-700 bg-zinc-900 text-zinc-300"
+        : "border-zinc-200 bg-zinc-50 text-zinc-600"
+    }`}
+    onClick={() =>
+      setShowModelMenu(!showModelMenu)
+    }
+  >
+    {selectedModel.icon}
+    <span>{selectedModel.name}</span>
+    <ChevronDown
+      size={12}
+      className="opacity-50"
+    />
+  </button>
+
+  {showModelMenu && (
+    <div
+      className={`absolute right-0 top-11 w-48 rounded-xl border shadow-xl z-50 ${
+        dm
+          ? "bg-zinc-900 border-zinc-800"
+          : "bg-white border-zinc-200"
+      }`}
+    >
+      {MODELS.map((model) => (
+        <button
+          key={model.name}
+          onClick={() => {
+            setSelectedModel(model);
+            setShowModelMenu(false);
+          }}
+          className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left ${
+            dm
+              ? "hover:bg-zinc-800"
+              : "hover:bg-zinc-100"
+          }`}
+        >
+          {model.icon}
+          <span>{model.name}</span>
+        </button>
+      ))}
+    </div>
+  )}
+</div>
 
             {/* Dark mode toggle */}
             <button
@@ -1003,9 +1048,9 @@ export default function ChatPage() {
               <div className="relative hidden sm:block shrink-0 model-menu">
                 <button
                   onClick={(e) => {
-  e.stopPropagation();
-  setShowModelMenu(!showModelMenu);
-}}
+                    e.stopPropagation();
+                    setShowModelMenu(!showModelMenu);
+                  }}
                   className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium self-end mb-0.5 transition ${
                     dm
                       ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
@@ -1019,8 +1064,7 @@ export default function ChatPage() {
 
                 {showModelMenu && (
                   <div
-                  onClick={(e) => e.stopPropagation()}
-
+                    onClick={(e) => e.stopPropagation()}
                     className={`absolute bottom-12 left-0 w-56 rounded-xl border overflow-hidden shadow-xl z-50 ${
                       dm
                         ? "bg-zinc-900 border-zinc-800"
@@ -1113,6 +1157,10 @@ export default function ChatPage() {
           </div>
         </div>
       </main>
+
+      </Panel>
+
+</PanelGroup>
     </div>
   );
 }
