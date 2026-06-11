@@ -156,20 +156,24 @@ function SidebarContent({
 
               {/* 3 Dots Menu */}
               <div className="relative mr-2 chat-menu">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
+              <button
+  onClick={(e) => {
+    e.stopPropagation();
 
-                    setOpenMenu(openMenu === chat._id ? null : chat._id);
-                  }}
-                  className={`opacity-0 group-hover:opacity-100 transition px-2 ${
-                    dm
-                      ? "text-zinc-500 hover:text-white"
-                      : "text-zinc-400 hover:text-black"
-                  }`}
-                >
-                  ⋯
-                </button>
+    setOpenMenu(
+      openMenu === chat._id
+        ? null
+        : chat._id
+    );
+  }}
+  className={`px-2 md:opacity-0 md:group-hover:opacity-100 ${
+    dm
+      ? "text-zinc-500 hover:text-white"
+      : "text-zinc-400 hover:text-black"
+  }`}
+>
+  ⋯
+</button>
 
                 {openMenu === chat._id && (
                   <div
@@ -426,24 +430,32 @@ export default function ChatPage() {
     };
   }, [sidebarOpen]);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (e) => {
-  //     const target = e.target;
-
-  //     if (target.closest(".model-menu") || target.closest(".chat-menu")) {
-  //       return;
-  //     }
-
-  //     setShowModelMenu(false);
-  //     setOpenMenu(null);
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        e.target.closest(".model-button") ||
+        e.target.closest(".model-menu") ||
+        e.target.closest(".chat-menu")
+      ) {
+        return;
+      }
+  
+      setShowModelMenu(false);
+      setOpenMenu(null);
+    };
+  
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
 
   const loadChats = async () => {
     try {
