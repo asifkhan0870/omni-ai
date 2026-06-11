@@ -71,7 +71,7 @@ export default function LoginPage() {
           <div className="text-center mb-8">
 
             <h1 className="text-5xl font-bold tracking-tight">
-              HashmiAI
+              Hashmi AI
             </h1>
 
             <p className="mt-3 text-zinc-400">

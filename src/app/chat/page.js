@@ -82,7 +82,7 @@ function SidebarContent({
           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
             <Sparkles size={14} className="text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight">HashmiAI</span>
+          <span className="font-bold text-lg tracking-tight">Hashmi AI</span>
         </div>
         {/* Close button — mobile only */}
         {onClose && (
