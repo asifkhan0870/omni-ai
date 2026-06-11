@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Plus, MessageSquare, Sparkles, Menu, X, ChevronDown } from "lucide-react";
 import { MODELS } from "../lib/models";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const RECENT_CHATS = [
   "Weather forecast for next week",
@@ -333,7 +335,11 @@ export default function ChatPage() {
                       <div className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
                         dm ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-900"
                       }`}>
-                        {msg.content}
+                        <ReactMarkdown
+  remarkPlugins={[remarkGfm]}
+>
+  {msg.content}
+</ReactMarkdown>
                       </div>
                       <UserAvatar />
                     </div>
@@ -343,7 +349,11 @@ export default function ChatPage() {
                       <div className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
                         dm ? "bg-zinc-900 border border-zinc-800 text-zinc-100" : "bg-white border border-zinc-200 text-zinc-800"
                       }`}>
-                        {msg.content}
+                        <ReactMarkdown
+  remarkPlugins={[remarkGfm]}
+>
+  {msg.content}
+</ReactMarkdown>
                       </div>
                     </div>
                   )
