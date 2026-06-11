@@ -669,7 +669,9 @@ export default function ChatPage() {
         }),
       });
 
-      
+      if (!response.ok) {
+        throw new Error("CREDIT_EXHAUSTED");
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
