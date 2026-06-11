@@ -28,6 +28,47 @@ export async function POST(req) {
       }
     );
 
+    // IMPORTANT
+    if (!response.ok) {
+      let errorText = "";
+
+      try {
+        const errorData = await response.json();
+
+        errorText =
+          errorData?.error?.message ||
+          errorData?.message ||
+          "";
+      } catch {}
+
+      if (
+        response.status === 401 ||
+        response.status === 402 ||
+        response.status === 429
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "⚠️ AI credits have been exhausted. Please try again later.",
+          },
+          {
+            status: 429,
+          }
+        );
+      }
+
+      return NextResponse.json(
+        {
+          error:
+            errorText ||
+            "AI service temporarily unavailable.",
+        },
+        {
+          status: response.status,
+        }
+      );
+    }
+
     return new Response(response.body, {
       headers: {
         "Content-Type": "text/event-stream",
@@ -35,10 +76,14 @@ export async function POST(req) {
         Connection: "keep-alive",
       },
     });
+
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
-        error: error.message,
+        error:
+          "Unable to connect to AI service.",
       },
       {
         status: 500,
