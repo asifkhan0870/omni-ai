@@ -14,11 +14,7 @@ import {
 import { MODELS } from "../lib/models";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  PanelGroup,
-  Panel,
-  PanelResizeHandle,
-} from "react-resizable-panels";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 
 const RECENT_CHATS = [
   "Weather forecast for next week",
@@ -156,24 +152,20 @@ function SidebarContent({
 
               {/* 3 Dots Menu */}
               <div className="relative mr-2 chat-menu">
-              <button
-  onClick={(e) => {
-    e.stopPropagation();
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
 
-    setOpenMenu(
-      openMenu === chat._id
-        ? null
-        : chat._id
-    );
-  }}
-  className={`px-2 md:opacity-0 md:group-hover:opacity-100 ${
-    dm
-      ? "text-zinc-500 hover:text-white"
-      : "text-zinc-400 hover:text-black"
-  }`}
->
-  ⋯
-</button>
+                    setOpenMenu(openMenu === chat._id ? null : chat._id);
+                  }}
+                  className={`px-2 md:opacity-0 md:group-hover:opacity-100 ${
+                    dm
+                      ? "text-zinc-500 hover:text-white"
+                      : "text-zinc-400 hover:text-black"
+                  }`}
+                >
+                  ⋯
+                </button>
 
                 {openMenu === chat._id && (
                   <div
@@ -208,7 +200,9 @@ function SidebarContent({
 
       {/* Model selector */}
       <div
-        className={`hidden md:block  border-t p-3 ${dm ? "border-zinc-800" : "border-zinc-200"}`}
+        className={`hidden md:block  border-t p-3 ${
+          dm ? "border-zinc-800" : "border-zinc-200"
+        }`}
       >
         <p
           className={`px-2 mb-1.5 text-[10px] uppercase font-semibold tracking-widest ${
@@ -393,7 +387,8 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [showModelMenu, setShowModelMenu] = useState(false);
+  const [showMobileModelMenu, setShowMobileModelMenu] = useState(false);
+  const [showDesktopModelMenu, setShowDesktopModelMenu] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
 
   const dm = darkMode;
@@ -439,21 +434,16 @@ export default function ChatPage() {
       ) {
         return;
       }
-  
-      setShowModelMenu(false);
+
+      setShowMobileModelMenu(false);
+      setShowDesktopModelMenu(false);
       setOpenMenu(null);
     };
-  
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-  
+
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -785,299 +775,151 @@ export default function ChatPage() {
         dm ? "bg-[#0a0a0b] text-white" : "bg-white text-zinc-900"
       }`}
     >
-
-<PanelGroup direction="horizontal">
-
-
-      {/* ── Desktop sidebar (hidden on mobile) ── */}
-      {/* ── Desktop sidebar (Resizable) ── */}
-<Panel
-  defaultSize={18}
-  minSize={12}
-  maxSize={35}
-  className="hidden md:block"
->
-  <aside
-    className={`h-full flex flex-col border-r ${
-      dm
-        ? "border-zinc-800 bg-zinc-950"
-        : "border-zinc-200 bg-zinc-50"
-    }`}
-  >
-    <SidebarContent
-      dm={dm}
-      chats={chats}
-      loadMessages={loadMessages}
-      createNewChat={createNewChat}
-      selectedModel={selectedModel}
-      setSelectedModel={setSelectedModel}
-      user={user}
-      openMenu={openMenu}
-      setOpenMenu={setOpenMenu}
-      renameChat={renameChat}
-      deleteChat={deleteChat}
-    />
-  </aside>
-</Panel>
-
-<PanelResizeHandle
-  className={`hidden md:block w-1 cursor-col-resize ${
-    dm
-      ? "bg-zinc-800 hover:bg-violet-500"
-      : "bg-zinc-200 hover:bg-violet-500"
-  }`}
-/>
-
-<Panel defaultSize={82}>
-
-      {/* ── Mobile drawer backdrop ── */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* ── Mobile drawer panel ── */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col border-r transform transition-transform duration-300 ease-in-out md:hidden ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } ${dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"}`}
-      >
-        <SidebarContent
-          dm={dm}
-          chats={chats}
-          loadMessages={loadMessages}
-          createNewChat={createNewChat}
-          selectedModel={selectedModel}
-          setSelectedModel={setSelectedModel}
-          onClose={() => setSidebarOpen(false)}
-          user={user}
-          openMenu={openMenu}
-          setOpenMenu={setOpenMenu}
-          renameChat={renameChat}
-          deleteChat={deleteChat}
-        />
-      </aside>
-
-      {/* ── Main column ── */}
-      <main className="relative flex h-full flex-col overflow-hidden min-w-0">
-        {/* ── Header ── */}
-        <header
-          className={`flex shrink-0 items-center justify-between px-3 sm:px-5 py-3 border-b z-10 ${
-            dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"
-          }`}
+      <PanelGroup direction="horizontal">
+        {/* ── Desktop sidebar (hidden on mobile) ── */}
+        {/* ── Desktop sidebar (Resizable) ── */}
+        <Panel
+          defaultSize={18}
+          minSize={12}
+          maxSize={35}
+          className="hidden md:block"
         >
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Hamburger — mobile only */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className={`md:hidden p-2 rounded-lg ${
-                dm
-                  ? "hover:bg-zinc-800 text-zinc-400"
-                  : "hover:bg-zinc-100 text-zinc-500"
-              }`}
-            >
-              <Menu size={18} />
-            </button>
+          <aside
+            className={`h-full flex flex-col border-r ${
+              dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-zinc-50"
+            }`}
+          >
+            <SidebarContent
+              dm={dm}
+              chats={chats}
+              loadMessages={loadMessages}
+              createNewChat={createNewChat}
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
+              user={user}
+              openMenu={openMenu}
+              setOpenMenu={setOpenMenu}
+              renameChat={renameChat}
+              deleteChat={deleteChat}
+            />
+          </aside>
+        </Panel>
 
-            {/* Logo — mobile only (desktop has it in sidebar) */}
-            <div className="flex items-center gap-1.5 md:hidden">
-              <div className="h-5 w-5 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-                <Sparkles size={10} className="text-white" />
-              </div>
-              <span className="font-bold text-sm tracking-tight">HashmiAI</span>
-            </div>
-
-            {/* Current model — desktop */}
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-sm font-semibold">
-                {selectedModel.name}
-              </span>
-              <span
-                className={`text-xs ${dm ? "text-zinc-600" : "text-zinc-400"}`}
-              >
-                ·
-              </span>
-              <span
-                className={`text-xs ${dm ? "text-zinc-500" : "text-zinc-400"}`}
-              >
-                {selectedModel.company}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Mobile model picker pill */}
-            <div className="relative md:hidden">
-  <button
-    className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
-      dm
-        ? "border-zinc-700 bg-zinc-900 text-zinc-300"
-        : "border-zinc-200 bg-zinc-50 text-zinc-600"
-    }`}
-    onClick={() =>
-      setShowModelMenu(!showModelMenu)
-    }
-  >
-    {selectedModel.icon}
-    <span>{selectedModel.name}</span>
-    <ChevronDown
-      size={12}
-      className="opacity-50"
-    />
-  </button>
-
-  {showModelMenu && (
-    <div
-      className={`absolute right-0 top-11 w-48 rounded-xl border shadow-xl z-50 ${
-        dm
-          ? "bg-zinc-900 border-zinc-800"
-          : "bg-white border-zinc-200"
-      }`}
-    >
-      {MODELS.map((model) => (
-        <button
-          key={model.name}
-          onClick={() => {
-            setSelectedModel(model);
-            setShowModelMenu(false);
-          }}
-          className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left ${
+        <PanelResizeHandle
+          className={`hidden md:block w-1 cursor-col-resize ${
             dm
-              ? "hover:bg-zinc-800"
-              : "hover:bg-zinc-100"
+              ? "bg-zinc-800 hover:bg-violet-500"
+              : "bg-zinc-200 hover:bg-violet-500"
           }`}
-        >
-          {model.icon}
-          <span>{model.name}</span>
-        </button>
-      ))}
-    </div>
-  )}
-</div>
+        />
 
-            {/* Dark mode toggle */}
-            <button
-              onClick={() => setDarkMode(!dm)}
-              className={`rounded-lg border px-2.5 sm:px-3 py-1.5 text-xs transition ${
-                dm
-                  ? "border-zinc-700 text-zinc-400 hover:bg-zinc-800"
-                  : "border-zinc-200 text-zinc-500 hover:bg-zinc-100"
-              }`}
-            >
-              {dm ? "☀️" : "🌙"}
-            </button>
-          </div>
-        </header>
-
-        {/* ── Scrollable body ── */}
-        <div className="flex-1 overflow-y-auto">
-          {!hasMessages ? (
-            <div className="flex min-h-full flex-col items-center justify-center px-4 py-10">
-              <HeroSection
-                models={MODELS}
-                selectedModel={selectedModel}
-                setSelectedModel={setSelectedModel}
-                dm={dm}
-              />
-            </div>
-          ) : (
-            <div className="px-3 sm:px-4 py-6">
-              <div className="mx-auto max-w-3xl space-y-4 sm:space-y-6">
-                {messages.map((msg, i) =>
-                  msg.role === "user" ? (
-                    <div key={i} className="flex justify-end gap-2 sm:gap-3">
-                      <div
-                        className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
-                          dm
-                            ? "bg-zinc-800 text-white"
-                            : "bg-zinc-100 text-zinc-900"
-                        }`}
-                      >
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {msg.content}
-                        </ReactMarkdown>
-                      </div>
-                      <UserAvatar />
-                    </div>
-                  ) : (
-                    <div key={i} className="flex gap-2 sm:gap-3">
-                      <AIAvatar icon={msg.model?.icon} />
-                      <div
-                        className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
-                          dm
-                            ? "bg-zinc-900 border border-zinc-800 text-zinc-100"
-                            : "bg-white border border-zinc-200 text-zinc-800"
-                        }`}
-                      >
-                        <div className="markdown-body">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {msg.content}
-                          </ReactMarkdown>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                )}
-
-                {loading && (
-                  <div className="flex gap-2 sm:gap-3">
-                    <AIAvatar icon={selectedModel.icon} />
-                    <div
-                      className={`rounded-3xl border ${
-                        dm
-                          ? "bg-zinc-900 border-zinc-800"
-                          : "bg-white border-zinc-200"
-                      }`}
-                    >
-                      <TypingDots />
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Input bar ── */}
-        <div
-          className={`shrink-0 px-3 sm:px-4 pb-4 sm:pb-5 pt-2 sm:pt-3 z-10 ${
-            dm
-              ? "border-t border-zinc-800 bg-zinc-950"
-              : "border-t border-zinc-200 bg-white"
-          }`}
-        >
-          <div className="mx-auto max-w-3xl">
+        <Panel defaultSize={82}>
+          {/* ── Mobile drawer backdrop ── */}
+          {sidebarOpen && (
             <div
-              className={`flex items-end gap-2 sm:gap-3 rounded-2xl border px-3 sm:px-4 py-2.5 sm:py-3 transition-shadow focus-within:ring-1 ${
-                dm
-                  ? "border-zinc-700 bg-zinc-900 focus-within:ring-zinc-600"
-                  : "border-zinc-300 bg-white focus-within:ring-zinc-300 shadow-sm"
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          {/* ── Mobile drawer panel ── */}
+          <aside
+            className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col border-r transform transition-transform duration-300 ease-in-out md:hidden ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } ${
+              dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"
+            }`}
+          >
+            <SidebarContent
+              dm={dm}
+              chats={chats}
+              loadMessages={loadMessages}
+              createNewChat={createNewChat}
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
+              onClose={() => setSidebarOpen(false)}
+              user={user}
+              openMenu={openMenu}
+              setOpenMenu={setOpenMenu}
+              renameChat={renameChat}
+              deleteChat={deleteChat}
+            />
+          </aside>
+
+          {/* ── Main column ── */}
+          <main className="relative flex h-full flex-col overflow-hidden min-w-0">
+            {/* ── Header ── */}
+            <header
+              className={`flex shrink-0 items-center justify-between px-3 sm:px-5 py-3 border-b z-10 ${
+                dm ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"
               }`}
             >
-              <div className="relative hidden sm:block shrink-0 model-menu">
+              <div className="flex items-center gap-2 sm:gap-3">
+                {/* Hamburger — mobile only */}
                 <button
+                  onClick={() => setSidebarOpen(true)}
+                  className={`md:hidden p-2 rounded-lg ${
+                    dm
+                      ? "hover:bg-zinc-800 text-zinc-400"
+                      : "hover:bg-zinc-100 text-zinc-500"
+                  }`}
+                >
+                  <Menu size={18} />
+                </button>
+
+                {/* Logo — mobile only (desktop has it in sidebar) */}
+                <div className="flex items-center gap-1.5 md:hidden">
+                  <div className="h-5 w-5 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+                    <Sparkles size={10} className="text-white" />
+                  </div>
+                  <span className="font-bold text-sm tracking-tight">
+                    HashmiAI
+                  </span>
+                </div>
+
+                {/* Current model — desktop */}
+                <div className="hidden md:flex items-center gap-2">
+                  <span className="text-sm font-semibold">
+                    {selectedModel.name}
+                  </span>
+                  <span
+                    className={`text-xs ${
+                      dm ? "text-zinc-600" : "text-zinc-400"
+                    }`}
+                  >
+                    ·
+                  </span>
+                  <span
+                    className={`text-xs ${
+                      dm ? "text-zinc-500" : "text-zinc-400"
+                    }`}
+                  >
+                    {selectedModel.company}
+                  </span>
+                </div>
+              </div>
+
+              <div className="relative md:hidden model-menu">
+                <button
+                  className={`model-button flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
+                    dm
+                      ? "border-zinc-700 bg-zinc-900 text-zinc-300"
+                      : "border-zinc-200 bg-zinc-50 text-zinc-600"
+                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowModelMenu(!showModelMenu);
+                    setShowMobileModelMenu((prev) => !prev);
                   }}
-                  className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium self-end mb-0.5 transition ${
-                    dm
-                      ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
-                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-                  }`}
                 >
                   {selectedModel.icon}
                   <span>{selectedModel.name}</span>
-                  <ChevronDown size={12} />
+                  <ChevronDown size={12} className="opacity-50" />
                 </button>
 
-                {showModelMenu && (
+                {showMobileModelMenu && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className={`absolute bottom-12 left-0 w-56 rounded-xl border overflow-hidden shadow-xl z-50 ${
+                    className={`model-menu absolute right-0 top-11 w-48 rounded-xl border shadow-xl z-[9999] ${
                       dm
                         ? "bg-zinc-900 border-zinc-800"
                         : "bg-white border-zinc-200"
@@ -1086,93 +928,234 @@ export default function ChatPage() {
                     {MODELS.map((model) => (
                       <button
                         key={model.name}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          console.log("MODEL SELECTED:", model.name);
+
                           setSelectedModel(model);
-                          setShowModelMenu(false);
+                          setShowMobileModelMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left ${
                           dm ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
                         }`}
                       >
-                        <span>{model.icon}</span>
-
-                        <div>
-                          <div className="font-medium">{model.name}</div>
-
-                          <div
-                            className={`text-xs ${
-                              dm ? "text-zinc-500" : "text-zinc-400"
-                            }`}
-                          >
-                            {model.company}
-                          </div>
-                        </div>
+                        {model.icon}
+                        <span>{model.name}</span>
                       </button>
                     ))}
                   </div>
                 )}
               </div>
+            </header>
 
-              {/* Textarea */}
-              <textarea
-                ref={textareaRef}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={`Message ${selectedModel.name}…`}
-                rows={1}
-                className={`flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none ${
-                  dm
-                    ? "text-white placeholder:text-zinc-600"
-                    : "text-zinc-900 placeholder:text-zinc-400"
-                }`}
-                style={{ minHeight: "24px", maxHeight: "160px" }}
-              />
+            {/* ── Scrollable body ── */}
+            <div className="flex-1 overflow-y-auto">
+              {!hasMessages ? (
+                <div className="flex min-h-full flex-col items-center justify-center px-4 py-10">
+                  <HeroSection
+                    models={MODELS}
+                    selectedModel={selectedModel}
+                    setSelectedModel={setSelectedModel}
+                    dm={dm}
+                  />
+                </div>
+              ) : (
+                <div className="px-3 sm:px-4 py-6">
+                  <div className="mx-auto max-w-3xl space-y-4 sm:space-y-6">
+                    {messages.map((msg, i) =>
+                      msg.role === "user" ? (
+                        <div
+                          key={i}
+                          className="flex justify-end gap-2 sm:gap-3"
+                        >
+                          <div
+                            className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
+                              dm
+                                ? "bg-zinc-800 text-white"
+                                : "bg-zinc-100 text-zinc-900"
+                            }`}
+                          >
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {msg.content}
+                            </ReactMarkdown>
+                          </div>
+                          <UserAvatar />
+                        </div>
+                      ) : (
+                        <div key={i} className="flex gap-2 sm:gap-3">
+                          <AIAvatar icon={msg.model?.icon} />
+                          <div
+                            className={`max-w-[85%] sm:max-w-[80%] rounded-3xl px-4 sm:px-5 py-2.5 sm:py-3 text-sm leading-relaxed ${
+                              dm
+                                ? "bg-zinc-900 border border-zinc-800 text-zinc-100"
+                                : "bg-white border border-zinc-200 text-zinc-800"
+                            }`}
+                          >
+                            <div className="markdown-body">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {msg.content}
+                              </ReactMarkdown>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
 
-              {/* Send button */}
-              <button
-                onClick={handleSend}
-                disabled={loading || !prompt.trim()}
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full self-end transition-all active:scale-95 hover:scale-105 disabled:opacity-30 disabled:cursor-not-allowed ${
-                  dm
-                    ? "bg-white text-black hover:bg-zinc-200"
-                    : "bg-zinc-900 text-white hover:bg-zinc-700"
-                }`}
-              >
-                <Send size={15} />
-              </button>
+                    {loading && (
+                      <div className="flex gap-2 sm:gap-3">
+                        <AIAvatar icon={selectedModel.icon} />
+                        <div
+                          className={`rounded-3xl border ${
+                            dm
+                              ? "bg-zinc-900 border-zinc-800"
+                              : "bg-white border-zinc-200"
+                          }`}
+                        >
+                          <TypingDots />
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Hint — desktop only, too cluttered on mobile */}
-            <p
-              className={`mt-2 text-center text-[11px] hidden sm:block ${
-                dm ? "text-zinc-700" : "text-zinc-400"
+            {/* ── Input bar ── */}
+            <div
+              className={`shrink-0 px-3 sm:px-4 pb-4 sm:pb-5 pt-2 sm:pt-3 z-10 ${
+                dm
+                  ? "border-t border-zinc-800 bg-zinc-950"
+                  : "border-t border-zinc-200 bg-white"
               }`}
             >
-              <kbd
-                className={`rounded px-1 py-0.5 font-mono text-[10px] ${
-                  dm ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"
-                }`}
-              >
-                Enter
-              </kbd>{" "}
-              to send ·{" "}
-              <kbd
-                className={`rounded px-1 py-0.5 font-mono text-[10px] ${
-                  dm ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"
-                }`}
-              >
-                Shift+Enter
-              </kbd>{" "}
-              for new line
-            </p>
-          </div>
-        </div>
-      </main>
+              <div className="mx-auto max-w-3xl">
+                <div
+                  className={`flex items-end gap-2 sm:gap-3 rounded-2xl border px-3 sm:px-4 py-2.5 sm:py-3 transition-shadow focus-within:ring-1 ${
+                    dm
+                      ? "border-zinc-700 bg-zinc-900 focus-within:ring-zinc-600"
+                      : "border-zinc-300 bg-white focus-within:ring-zinc-300 shadow-sm"
+                  }`}
+                >
+                  <div className="relative hidden sm:block shrink-0 model-menu">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowDesktopModelMenu(!showDesktopModelMenu);
+                      }}
+                      className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium self-end mb-0.5 transition ${
+                        dm
+                          ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                      }`}
+                    >
+                      {selectedModel.icon}
+                      <span>{selectedModel.name}</span>
+                      <ChevronDown size={12} />
+                    </button>
 
-      </Panel>
+                    {showDesktopModelMenu && (
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className={`absolute bottom-12 left-0 w-56 rounded-xl border overflow-hidden shadow-xl z-50 ${
+                          dm
+                            ? "bg-zinc-900 border-zinc-800"
+                            : "bg-white border-zinc-200"
+                        }`}
+                      >
+                        {MODELS.map((model) => (
+                          <button
+                            key={model.name}
+                            onClick={() => {
+                              setSelectedModel(model);
+                              setShowDesktopModelMenu(false);
+                            }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left ${
+                              dm ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
+                            }`}
+                          >
+                            <span>{model.icon}</span>
 
-</PanelGroup>
+                            <div>
+                              <div className="font-medium">{model.name}</div>
+
+                              <div
+                                className={`text-xs ${
+                                  dm ? "text-zinc-500" : "text-zinc-400"
+                                }`}
+                              >
+                                {model.company}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Textarea */}
+                  <textarea
+                    ref={textareaRef}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={`Message ${selectedModel.name}…`}
+                    rows={1}
+                    className={`flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none ${
+                      dm
+                        ? "text-white placeholder:text-zinc-600"
+                        : "text-zinc-900 placeholder:text-zinc-400"
+                    }`}
+                    style={{ minHeight: "24px", maxHeight: "160px" }}
+                  />
+
+                  {/* Send button */}
+                  <button
+                    onClick={handleSend}
+                    disabled={loading || !prompt.trim()}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full self-end transition-all active:scale-95 hover:scale-105 disabled:opacity-30 disabled:cursor-not-allowed ${
+                      dm
+                        ? "bg-white text-black hover:bg-zinc-200"
+                        : "bg-zinc-900 text-white hover:bg-zinc-700"
+                    }`}
+                  >
+                    <Send size={15} />
+                  </button>
+                </div>
+
+                {/* Hint — desktop only, too cluttered on mobile */}
+                <p
+                  className={`mt-2 text-center text-[11px] hidden sm:block ${
+                    dm ? "text-zinc-700" : "text-zinc-400"
+                  }`}
+                >
+                  <kbd
+                    className={`rounded px-1 py-0.5 font-mono text-[10px] ${
+                      dm
+                        ? "bg-zinc-800 text-zinc-500"
+                        : "bg-zinc-100 text-zinc-400"
+                    }`}
+                  >
+                    Enter
+                  </kbd>{" "}
+                  to send ·{" "}
+                  <kbd
+                    className={`rounded px-1 py-0.5 font-mono text-[10px] ${
+                      dm
+                        ? "bg-zinc-800 text-zinc-500"
+                        : "bg-zinc-100 text-zinc-400"
+                    }`}
+                  >
+                    Shift+Enter
+                  </kbd>{" "}
+                  for new line
+                </p>
+              </div>
+            </div>
+          </main>
+        </Panel>
+      </PanelGroup>
     </div>
   );
 }
